@@ -11,7 +11,7 @@ Please note that I am not a cryptographer. Until this package is subjected to co
 Inside your package:
 
 ```sh
-meteor add meteor-accounts-shibboleth
+meteor add njwallace315:meteor-accounts-shibboleth
 meteor add accounts-password
 ```
 
@@ -34,7 +34,16 @@ The follwing attributes must be present in meteor settings for this package to w
 
 ## Usage example
 
-For an example I recommend you clone [a meteor example app]( https://github.com/meteor/simple-todos-react.git) and remove the accounts ui and add ‘login’ and ‘logout’ buttons with the following onClick handlers: 
+For an example I recommend you clone [a meteor example app]( https://github.com/meteor/simple-todos-react.git) 
+
+Navigate to that project and run 
+```sh
+meteor add njwallace315:meteor-accounts-shibboleth
+meteor add accounts-password
+meteor npm install
+```
+
+In imports/ui/App.js remove the AccountsUIWrapper component and add ‘login’ and ‘logout’ buttons with the following onClick handlers: 
 
 ```javascript
 handleLogin = () => {
@@ -70,17 +79,13 @@ Meteor.settings = {
     "saml": {
         "provider": "shibboleth-idp",
         "generateUsers": true,
-        "authFields": {
-          "dbname": "email.addresses",
-          "fname": "email"
-        },
         "spSamlCert": '-----BEGIN CERTIFICATE-----<Your public cert>-----END CERTIFICATE-----\n',
-        "spSamlKey": "-----BEGIN RSA PRIVATE KEY-----<Your Private Cert>-----END RSA PRIVATE KEY-----\n",
+        "spSamlKey": "-----BEGIN RSA PRIVATE KEY-----<Your Private key>-----END RSA PRIVATE KEY-----\n",
         "entryPoint": "https://samltest.id/idp/profile/SAML2/Redirect/SSO",
         "logoutUrl": "https://samltest.id/idp/profile/SAML2/Redirect/SLO",
         "idpMetadataUrl": "https://samltest.id/saml/idp",
         "issuer": "your-domain.com",
-        "idpCert": '-----BEGIN CERTIFICATE-----<samltest.id Idp signing cert>-----\n'
+        "idpCert": '-----BEGIN CERTIFICATE-----<samltest.id Idp signing cert>-----END CERTIFICATE-----\n'
     }
 
 }
@@ -96,6 +101,11 @@ Finally add samltest's signing cert which can be found [here](https://samltest.i
 in server/main.js add the following line:
 ```javascript
 import './lib/settings'
+```
+
+Start your application with
+```sh
+meteor run
 ```
 
 You will need to [upload your service provider metadata to samltest.id's Idp](https://samltest.id/upload.php). Your metadata URL will be `https://<your-domain.com>/_saml/metadata/shibboleth-idp`. 
