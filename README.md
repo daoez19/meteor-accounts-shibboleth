@@ -6,9 +6,6 @@ It sends SSO and SLO requests with an HTTP-Redirect binding.
 It currently works when using [samltest.id](https://samltest.id/) as the identity provider. 
 Please note that I am not a cryptographer. Until this package is subjected to code review you’ll need to use it at your own discretion. 
 
-
-![](header.png)
-
 ## Installation
 
 Inside your package:
