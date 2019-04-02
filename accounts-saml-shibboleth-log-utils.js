@@ -1,20 +1,21 @@
 bDebug = false;
 MyLogs = new Meteor.Collection("samlLogs");
 
-// code to run on server at startup
-if(Meteor.settings) {
-    if(Meteor.settings['public']) {
-        bDebug = Meteor.settings.public.debug == true;
+Meteor.startup(function () {
+    if (Meteor.settings) {
+        if (Meteor.settings['public']) {
+            bDebug = Meteor.settings.public.debug == true;
+        }
     }
-}
+})
 
 if (!Accounts.saml) {
     Accounts.saml = {};
 }
 
-Accounts.saml.debugLog = function(file,line,message,isError ){
-    if(bDebug) {
-        if(isError) {
+Accounts.saml.debugLog = function (file, line, message, isError) {
+    if (bDebug) {
+        if (isError) {
 
             MyLogs.insert({
                 file: file,
@@ -24,7 +25,7 @@ Accounts.saml.debugLog = function(file,line,message,isError ){
                 date: new Date(Date.now())
             });
         }
-        else{
+        else {
 
             MyLogs.insert({
                 file: file,
