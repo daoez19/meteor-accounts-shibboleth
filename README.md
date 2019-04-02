@@ -134,6 +134,10 @@ With this you should be able to use the login and logout buttons to authenticate
 * It is only necessary to include Meteor's accounts-password package if `generateUsers` is set to true.
 
 * I have not yet implemented signature validation on logout, although the signatures are validated when authenticating a user.
+
+* Occasionally you may see an exception pop up on the server console after a successful login:  
+`Exception while invoking method 'login' Error: SAML Profile did not contain an email address`  
+This is a known issue where the receives an empty login response before the actual response comes through. I’m working on tracking it down but for now the exception seems benign. 
   
 
 ## Credits
