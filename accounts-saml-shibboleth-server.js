@@ -315,8 +315,11 @@ middleware = function (req, res, next) {
           SAMLResponse: decodeURIComponent(req.query.SAMLResponse.replace('SAMLResponse=', '')),
         };
         _saml = new SAML(service);
-        _saml.verifyLogoutResponse(req.body.SAMLResponse);
-        res.end();
+        if (_saml.verifyLogoutResponse(req.body.SAMLResponse)) {
+          res.end()
+        } else {
+          throw new Error('Although application session may have been terminated, the server failed to invalidate the session through the Idp')
+        }
         break;
       }
       case 'metadata': {

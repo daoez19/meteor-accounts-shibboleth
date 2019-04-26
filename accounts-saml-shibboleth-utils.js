@@ -447,6 +447,7 @@ SAML.prototype.verifyLogoutResponse = function (deflatedResponse) {
   var data = Buffer.from(deflatedResponse, "base64")
   zlib.inflateRaw(data, function (err, inflated) {
     if (err) {
+      return false
     }
     // if we have trouble validating signature we won't throw an error on logout
     var parserConfig = {
@@ -457,16 +458,16 @@ SAML.prototype.verifyLogoutResponse = function (deflatedResponse) {
     var parser = new xml2js.Parser(parserConfig);
     parser.parseString(inflated, function (err, doc) {
       if (err) {
-        throw new Error('Error parsing logout response')
+        return false
       }
       var statusCode = doc.LogoutResponse.Status[0].StatusCode[0].$.Value;
       if (statusCode === "urn:oasis:names:tc:SAML:2.0:status:Success") {
         return true;
       }
-      throw new Error('Invalid status code, logout not successful')
+      return false
     })
   })
-
+  return false;
 };
 
 SAML.prototype.checkSAMLStatus = function (xmlDomDoc) {
