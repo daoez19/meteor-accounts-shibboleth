@@ -1,3 +1,4 @@
+
 if (!Accounts.saml) {
   Accounts.saml = {};
 }
@@ -5,7 +6,7 @@ if (!Accounts.saml) {
 Accounts.saml.initiateLogin = function (options, callback, dimensions) {
   // default dimensions that worked well for facebook and google
   var popup = openCenteredPopup(
-    Meteor.absoluteUrl("_saml/authorize/" + options.provider + "/" + options.credentialToken),
+    Meteor.absoluteUrl("Shibboleth.sso/authorize/" + options.provider + "/" + options.credentialToken),
     (dimensions && dimensions.width) || 650,
     (dimensions && dimensions.height) || 500);
 
@@ -77,7 +78,7 @@ Meteor.loginWithSaml = function (options, callback) {
   });
 };
 
-Meteor.logoutWithSaml = function (options, callback) {
+Meteor.logoutWithSaml = function (options, callback, moment) {
   const userId = Meteor.userId();
   if (!userId) {
     callback('There is no logged in user')
@@ -85,10 +86,11 @@ Meteor.logoutWithSaml = function (options, callback) {
   }
   Meteor.logout(() => {
     try {
-      window.location.href = "_saml/logout/" + options.provider + '/' + userId
-      callback(null, 'Logout successful')
+      window.location.href = "Shibboleth.sso" + "/logout/" + options.provider + '/' + userId
     } catch (err) {
       callback(err)
     }
   });
+  Accounts.saml.debugLog('client.js', '88', 'logout from client completed, calling callback: ', false);
+  callback(null, 'Logout successful')
 };

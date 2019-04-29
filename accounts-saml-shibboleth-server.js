@@ -7,7 +7,7 @@ let Fiber = Npm.require('fibers');
 let connect = Npm.require('connect');
 let zlib = Npm.require('zlib');
 let xmldom = Npm.require('xmldom');
-RoutePolicy.declare('/_saml/', 'network');
+RoutePolicy.declare('/Shibboleth.sso/', 'network');
 
 Accounts.registerLoginHandler(function (loginRequest) {
   try {
@@ -189,7 +189,7 @@ middleware = function (req, res, next) {
       throw new Error('Missing config settings');
     }
     let samlObject = samlUrlToObject(req.url);
-    if (!samlObject || !samlObject.serviceName) {
+    if (!samlObject || (!samlObject.serviceName && samlObject.actionName !== 'metadata')) {
       next();
       return;
     }
@@ -216,10 +216,10 @@ middleware = function (req, res, next) {
     switch (samlObject.actionName) {
       case 'authorize': {
         if (settings && settings.issuer) {
-          service.callbackUrl = 'https://' + settings.issuer + '/_saml/validate/' + service.provider
+          service.callbackUrl = 'https://' + settings.issuer + '/Shibboleth.sso/validate/' + service.provider
         } else {
           Accounts.saml.debugLog('saml_server.js', '221', 'Issuer not set in SAML settings. Using ROOT_URL environment variable. If you are using localhost, this may cause issues with shibboleth.', false);
-          service.callbackUrl = Meteor.absoluteUrl('/_saml/validate/' + service.provider);
+          service.callbackUrl = Meteor.absoluteUrl('/Shibboleth.sso/validate/' + service.provider);
         }
         service.id = samlObject.credentialToken;
         _saml = new SAML(service);
@@ -340,21 +340,21 @@ middleware = function (req, res, next) {
 
 var samlUrlToObject = function (url) {
   Accounts.saml.debugLog('saml_server.js', '339', "samlUtrlToObject: " + url, false);
-  // req.url will be "/_saml/<action>/<service name>/<credentialToken>"
+  // req.url will be "/Shibboleth.sso/<action>/<service name>/<credentialToken>"
   if (!url) return null;
 
   let splitPath = url.split('/');
 
   // Any non-saml request will continue down the default
   // middlewares.
-  if (splitPath[1] !== '_saml') return null;
+  if (splitPath[1] !== 'Shibboleth.sso') return null;
 
   // logout response url has a query string that can get mixed up in the service name
   // the logout response should not have a credential token.
   return {
-    actionName: splitPath[2],
-    serviceName: splitPath[3].split('?')[0],
-    credentialToken: splitPath[4],
+    actionName: splitPath[2].toLowerCase(),
+    serviceName: splitPath[2].toLowerCase() === 'metadata' ? 'shibboleth-idp' : splitPath[3].split('?')[0],
+    credentialToken: splitPath[4] || null,
   };
 };
 
@@ -369,7 +369,6 @@ var closePopup = function (res, err) {
       err +
       '</div><a onclick="window.close();">Close Window</a></body></html>';
   }
-
   res.end(content, 'utf-8');
 };
 

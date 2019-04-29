@@ -24,7 +24,7 @@ SAML.prototype.initialize = function (options) {
   }
 
   if (!options.path) {
-    options.path = '/_saml/';
+    options.path = '/Shibboleth.sso/';
   }
 
   if (!options.issuer) {
@@ -61,9 +61,9 @@ SAML.prototype.generateInstant = function () {
   return new Date().toISOString();
 };
 
-SAML.prototype.signRequest = function (xml) {
+SAML.prototype.signRequest = function (samlRequest) {
   var signer = crypto.createSign('RSA-SHA1');
-  signer.update(xml);
+  signer.update(samlRequest);
   return signer.sign(this.options.spSamlKey, 'base64');
 }
 
@@ -168,13 +168,16 @@ SAML.prototype.requestToUrl = function (request, operation, callback) {
     var samlRequest = {
       SAMLRequest: base64
     };
+    if (operation === 'logout') {
+      const goto = new Buffer('https://nate-dev-brms.ngrok.io')
+      samlRequest.RelayState = goto.toString('base64')
+    }
 
     if (self.options.spSamlKey) {
       samlRequest.SigAlg = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
       samlRequest.Signature = self.signRequest(querystring.stringify(samlRequest));
     }
     target += querystring.stringify(samlRequest);
-
     callback(null, target);
   });
 }
