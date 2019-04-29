@@ -108,7 +108,7 @@ Start your application with
 meteor run
 ```
 
-You will need to [upload your service provider metadata to samltest.id's Idp](https://samltest.id/upload.php). Your metadata URL will be `https://<your-domain.com>/_saml/metadata/shibboleth-idp`. 
+You will need to [upload your service provider metadata to samltest.id's Idp](https://samltest.id/upload.php). Your metadata URL will be `https://<your-domain>/Shibboleth.sso/Metadata`. 
 
 With this you should be able to use the login and logout buttons to authenticate with samltest's Idp. If you did not set `generateUsers` to true in your settings, you will need to create an account for the dummy users where `email.addresses` on the user object is equal to the email address given by samltest.
 
@@ -138,6 +138,7 @@ With this you should be able to use the login and logout buttons to authenticate
 * Occasionally you may see an exception pop up on the server console after a successful login:  
 `Exception while invoking method 'login' Error: SAML Profile did not contain an email address`  
 This is a known issue where the receives an empty login response before the actual response comes through. I’m working on tracking it down but for now the exception seems benign. 
+
   
 
 ## Credits
