@@ -6,7 +6,7 @@ if (!Accounts.saml) {
 Accounts.saml.initiateLogin = function (options, callback, dimensions) {
   // default dimensions that worked well for facebook and google
   var popup = openCenteredPopup(
-    Meteor.absoluteUrl(options.path + "/authorize/" + options.provider + "/" + options.credentialToken),
+    Meteor.absoluteUrl((options.path ? options.path : '_saml') + "/authorize/" + options.provider + "/" + options.credentialToken),
     (dimensions && dimensions.width) || 650,
     (dimensions && dimensions.height) || 500);
 
@@ -86,7 +86,7 @@ Meteor.logoutWithSaml = function (options, callback, moment) {
   }
   Meteor.logout(() => {
     try {
-      window.location.href = options.path ? options.path : '_saml' + "/logout/" + options.provider + '/' + userId
+      window.location.href = (options.path ? options.path : '_saml') + "/logout/" + options.provider + '/' + userId
     } catch (err) {
       callback(err)
     }

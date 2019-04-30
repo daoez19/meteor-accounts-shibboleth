@@ -8,11 +8,18 @@ let connect = Npm.require('connect');
 let zlib = Npm.require('zlib');
 let xmldom = Npm.require('xmldom');
 
-let path = getSamlSettigs().path
-if (!path) {
-  path = '_saml'
+var getSamlSettigs = function () {
+  if (Meteor.settings && Meteor.settings.saml) return Meteor.settings.saml;
+  return null
 }
-RoutePolicy.declare('/' + path + '/', 'network');
+
+Meteor.startup(function () {
+  let path = '_saml'
+  if (Meteor.settings && Meteor.settings.saml && Meteor.settings.saml.path) {
+    path = Meteor.settings.saml.path
+  }
+  RoutePolicy.declare('/' + path + '/', 'network');
+})
 
 
 Accounts.registerLoginHandler(function (loginRequest) {
@@ -222,10 +229,10 @@ middleware = function (req, res, next) {
     switch (samlObject.actionName) {
       case 'authorize': {
         if (settings && settings.issuer) {
-          service.callbackUrl = 'https://' + settings.issuer + '/' + settings.path ? settings.path : '_saml' + '/validate/' + service.provider
+          service.callbackUrl = 'https://' + settings.issuer + '/' + (settings.path ? settings.path : '_saml') + '/validate/' + service.provider
         } else {
           Accounts.saml.debugLog('saml_server.js', '221', 'Issuer not set in SAML settings. Using ROOT_URL environment variable. If you are using localhost, this may cause issues with shibboleth.', false);
-          service.callbackUrl = Meteor.absoluteUrl('/' + settings.path ? settings.path : '_saml' + '/validate/' + service.provider);
+          service.callbackUrl = Meteor.absoluteUrl('/' + (settings.path ? settings.path : '_saml') + '/validate/' + service.provider);
         }
         service.id = samlObject.credentialToken;
         _saml = new SAML(service);
@@ -379,7 +386,4 @@ var closePopup = function (res, err) {
   res.end(content, 'utf-8');
 };
 
-var getSamlSettigs = function () {
-  if (Meteor.settings && Meteor.settings.saml) return Meteor.settings.saml;
-  return null
-}
+

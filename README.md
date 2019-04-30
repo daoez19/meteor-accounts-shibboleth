@@ -26,7 +26,7 @@ The follwing attributes must be present in meteor settings for this package to w
 - `idpMetadataUrl` - * *Required* * - The url where your Idp's metadata file can be accessed.
 - `idpCert` - * *Required* * - The public certificate that can be used to validate your Idp's signature.
 - `issuer` - The url where your application is running. This will default to the ROOT_URL environment variable.
-- `path` - A string that will be the path to the shibboleth middleware. Defaults to '_saml'.
+- `path` - A string that will be the path to the shibboleth middleware. Defaults to '_saml'. If set, path must me set in the options passed to the Meteor log in/out methods as shown below.
 
 - `generateUsers` - (Boolean) When true, users who authenticate but do not have an entry in the Meteor Users collection will have an entry created.
 - `authFields` - (Object) Contains a dbfield and fname that are used to customize the how the users colleciton is queried to find the authenticated user.
@@ -49,7 +49,8 @@ In imports/ui/App.js remove the AccountsUIWrapper component and add ‘login’ 
 ```javascript
 handleLogin = () => {
     const provider = 'shibboleth-idp'
-    Meteor.loginWithSaml({ provider }, (err, result) => {
+    const path = 'Shibboleth.sso'
+    Meteor.loginWithSaml({ provider, path }, (err, result) => {
       if (err) {
         console.log(err)
       }
@@ -59,7 +60,8 @@ handleLogin = () => {
 
 handleLogout = () => {
   const provider = 'shibboleth-idp'
-  Meteor.logoutWithSaml({ provider }, (err, result) => {
+    const path = 'Shibboleth.sso'
+  Meteor.logoutWithSaml({ provider, path }, (err, result) => {
     if (err) {
       console.log(err)
     }
@@ -80,6 +82,7 @@ Meteor.settings = {
     "saml": {
         "provider": "shibboleth-idp",
         "generateUsers": true,
+        "path": "Shibboleth.sso",
         "spSamlCert": '-----BEGIN CERTIFICATE-----<Your public cert>-----END CERTIFICATE-----\n',
         "spSamlKey": "-----BEGIN RSA PRIVATE KEY-----<Your Private key>-----END RSA PRIVATE KEY-----\n",
         "entryPoint": "https://samltest.id/idp/profile/SAML2/Redirect/SSO",

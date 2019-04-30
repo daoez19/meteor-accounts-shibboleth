@@ -15,6 +15,7 @@ SAML = function (options) {
 };
 
 SAML.prototype.initialize = function (options) {
+  console.log(options.callbackUrl)
   if (!options) {
     options = {};
   }
@@ -24,7 +25,7 @@ SAML.prototype.initialize = function (options) {
   }
 
   if (!options.path) {
-    options.path = '/_saml/';
+    options.path = '_saml';
   }
 
   if (!options.issuer) {
@@ -38,13 +39,12 @@ SAML.prototype.initialize = function (options) {
   if (!options.provider) {
     options.provider = 'shibboleth-idp'
   }
-
   if (!options.callbackUrl) {
-    options.callbackUrl = options.protocol + options.issuer + options.path + 'validate/' + options.provider
+    options.callbackUrl = options.protocol + options.issuer + '/' + options.path + '/validate/' + options.provider
   }
 
   if (!options.logoutCallbackUrl) {
-    options.logoutCallbackUrl = options.protocol + options.issuer + options.path + 'validateLogout/' + options.provider
+    options.logoutCallbackUrl = options.protocol + options.issuer + '/' + options.path + '/validateLogout/' + options.provider
   }
 
   if (!options.identifierFormat) {
