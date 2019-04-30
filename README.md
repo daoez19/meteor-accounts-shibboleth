@@ -25,7 +25,8 @@ The follwing attributes must be present in meteor settings for this package to w
 - `logoutUrl` - * *Required* * - The HTTP-Redirect bound SLO url for your Idp.
 - `idpMetadataUrl` - * *Required* * - The url where your Idp's metadata file can be accessed.
 - `idpCert` - * *Required* * - The public certificate that can be used to validate your Idp's signature.
-- `issuer` - The url where your application is running. If not set, this will default to the ROOT_URL environment variable.
+- `issuer` - The url where your application is running. This will default to the ROOT_URL environment variable.
+- `path` - A string that will be the path to the shibboleth middleware. Defaults to '_saml'.
 
 - `generateUsers` - (Boolean) When true, users who authenticate but do not have an entry in the Meteor Users collection will have an entry created.
 - `authFields` - (Object) Contains a dbfield and fname that are used to customize the how the users colleciton is queried to find the authenticated user.
@@ -108,7 +109,7 @@ Start your application with
 meteor run
 ```
 
-You will need to [upload your service provider metadata to samltest.id's Idp](https://samltest.id/upload.php). Your metadata URL will be `https://<your-domain>/Shibboleth.sso/Metadata`. 
+You will need to [upload your service provider metadata to samltest.id's Idp](https://samltest.id/upload.php). Your metadata URL will be `https://<your-domain>/<path>/Metadata`. 
 
 With this you should be able to use the login and logout buttons to authenticate with samltest's Idp. If you did not set `generateUsers` to true in your settings, you will need to create an account for the dummy users where `email.addresses` on the user object is equal to the email address given by samltest.
 

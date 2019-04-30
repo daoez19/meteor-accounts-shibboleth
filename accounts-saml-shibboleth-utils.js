@@ -24,7 +24,7 @@ SAML.prototype.initialize = function (options) {
   }
 
   if (!options.path) {
-    options.path = '/Shibboleth.sso/';
+    options.path = '/_saml/';
   }
 
   if (!options.issuer) {
