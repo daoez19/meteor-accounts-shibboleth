@@ -1,7 +1,7 @@
 Package.describe({
     name: "njwallace315:meteor-accounts-shibboleth",
     summary: "Meteor accounts integration with SAML/Shibboleth",
-    version: "1.0.1",
+    version: "1.1.1",
     git: "https://github.com/nwallace315/meteor-accounts-shibboleth",
     documentation: 'README.md'
 });
